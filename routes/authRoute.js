@@ -22,7 +22,7 @@ router.post('/SignUp',async (req,res)=>
 
         res.cookie('RefreshToken',RefreshToken,{
             httpOnly:true,
-            sameSite:'none',
+            sameSite:'Non',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             secure:true,
         })
