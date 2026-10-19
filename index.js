@@ -2,18 +2,18 @@ const express = require("express")
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const app = express()
+app.set('trust proxy', 1)
 
 
 require('dotenv').config();
 
 const mongoose =require("mongoose") 
 app.use(cors({
-    origin: 'https://blog-frontend-32lx0t3u1-houssam18.vercel.app/',
+    origin: 'https://blog-frontend-32lx0t3u1-houssam18.vercel.app',
     credentials: true 
 }));
 app.use(cookieParser());
 app.use(express.json());
-app.set('trust proxy', 1)
 
 
 const postRouter = require('./routes/postRoute');
