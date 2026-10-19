@@ -6,3 +6,9 @@ exports.generateToken = (userId,role)=>{
 exports.verifyToken = (token)=>{
     return jwt.verify(token,process.env.JWT_SECRET)
 }
+exports.generateRefreshToken = (userId)=>{
+    return jwt.sign({id:userId},process.env.REFRESH_TOKEN_SECRET,{expiresIn:process.env.REFRESH_TOKEN_EXPIRES_IN || '7d'})
+}
+exports.verifyRefreshToken = (token)=>{
+    return jwt.verify(token,process.env.REFRESH_TOKEN_SECRET)
+}
