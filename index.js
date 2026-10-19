@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const mongoose =require("mongoose") 
 app.use(cors({
-    origin: 'https://blog-frontend-32lx0t3u1-houssam18.vercel.app',
+    origin: 'https://blog-frontend-houssam18.vercel.app',
     credentials: true 
 }));
 app.use(cookieParser());
