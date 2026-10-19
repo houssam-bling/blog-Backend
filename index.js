@@ -9,7 +9,7 @@ const mongoose =require("mongoose")
 const cors = require('cors');
 
 app.use(cors());
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(express.json());
 
 
