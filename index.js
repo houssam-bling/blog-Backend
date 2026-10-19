@@ -6,8 +6,10 @@ const app = express()
 require('dotenv').config();
 
 const mongoose =require("mongoose") 
-const cors = require('cors');
-
+app.use(cors({
+    origin: 'https://blog-frontend-32lx0t3u1-houssam18.vercel.app',
+    credentials: true 
+}));
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
