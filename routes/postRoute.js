@@ -167,4 +167,43 @@ router.delete('/:id',protect,isOwnerOrAdmin,async (req,res)=>{
     }
 
 })
+router.patch('/:id/', isOwnerOrAdmin,protect,async (req, res) => {
+
+    if(!req.body.postTitle || !req.body.postBody )
+    {
+        res.status(404).json({ message: "كل الحقول مطلوبة" });
+        return 
+    }
+
+    try {
+        const  userId  = req.user._id; 
+
+        let updatedPost;
+        
+        const thePost = await post.findById(req.params.id)
+        const theUser = await post.findById(userId)
+        if(!theUser)
+        {
+            res.status(404).json({ message: "المستخدم لم يعد موجود" });
+            return 
+        }
+
+        if (!thePost) {
+            return res.status(404).json({ message: "المنشور غير موجود" });
+        }
+        
+        updatedPost = await post.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { postTitle:req.body.postTitle,
+                postBody:req.body.postBody
+             }},
+            { new: true }
+        );
+        
+        res.status(200).json({ message: 'تم تسجيل عدم الإعجاب بنجاح', updatedPost });
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
+});
+
 module.exports = router;

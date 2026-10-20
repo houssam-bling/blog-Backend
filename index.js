@@ -9,7 +9,14 @@ require('dotenv').config();
 
 const mongoose =require("mongoose") 
 app.use(cors({
-    origin: 'https://blog-frontend-houssam18.vercel.app',
+    origin: (origin,callback)=>{
+
+        if('http://localhost:5173' === origin || origin.endsWith('.vercel.app') || !origin)
+        {
+           return callback(null,true);
+        }
+        callback(new Error('Not allowed by CORS'));
+    },
     credentials: true 
 }));
 app.use(cookieParser());
