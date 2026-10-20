@@ -4,7 +4,7 @@ const user = require('../models/user')
 
 const router = express.Router()
 
-const { protect } = require('../middleware/auth')
+const { protect, isOwnerOrAdmin } = require('../middleware/auth')
 
 router.get('/',async (req,res)=>
 {
@@ -157,4 +157,14 @@ router.patch('/:id/Dislike', protect,async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 });
+
+router.delete('/:id',protect,isOwnerOrAdmin,async (req,res)=>{
+    try {
+        await post.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: "تم حذف المنشور بنجاح" });
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
+
+})
 module.exports = router;

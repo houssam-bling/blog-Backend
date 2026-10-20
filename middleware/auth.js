@@ -1,5 +1,5 @@
-const user = require('../models/user')
-const {verifyToken} = require('../jwt')
+const {verifyToken} = require('../jwt');
+const post = require('../models/post');
 
 exports.protect = async (req,res,next)=>{
 
@@ -61,3 +61,31 @@ exports.authorize = (...roles)=>{
         next();
     }
 } 
+
+
+exports.isOwnerOrAdmin = async (req,res,next)=>{
+
+    try
+    {
+       const Post = await post.findById(req.params.id)
+       if(!Post)
+       {
+            return res.status(404).json({message:"المنشور غير موجود"})
+       }
+
+       if(req.user.role === "admin")
+       {
+          return  next();
+       }
+
+       if(req.user._id.toString() !== Post.author.toString())
+       {
+            return res.status(401).json({message:"غير مصرح"})
+       }
+       next()
+    }
+    catch (err) 
+    {
+        res.status(500).json({ message: err.message });
+    }
+}
