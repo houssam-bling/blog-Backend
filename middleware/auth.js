@@ -1,5 +1,6 @@
 const {verifyToken} = require('../jwt');
 const post = require('../models/post');
+const user = require('../models/user');
 
 exports.protect = async (req,res,next)=>{
 
