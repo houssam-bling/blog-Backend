@@ -19,7 +19,7 @@ exports.protect = async (req,res,next)=>{
                 })
         }
 
-        const decoded = verifyToken(token)
+        const decoded = verifyToken(token);
 
         const theUser = await user.findById(decoded.id);
         if (!theUser) {

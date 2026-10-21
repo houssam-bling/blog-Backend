@@ -181,7 +181,7 @@ router.patch('/:id',protect,isOwnerOrAdmin,async (req, res) => {
         let updatedPost;
         
         const thePost = await post.findById(req.params.id)
-        const theUser = await post.findById(userId)
+        const theUser = await user.findById(userId)
         if(!theUser)
         {
             res.status(404).json({ message: "المستخدم لم يعد موجود" });
