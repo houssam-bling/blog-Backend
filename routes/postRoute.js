@@ -167,7 +167,7 @@ router.delete('/:id',protect,isOwnerOrAdmin,async (req,res)=>{
     }
 
 })
-router.patch('/:id/', isOwnerOrAdmin,protect,async (req, res) => {
+router.patch('/:id',protect,isOwnerOrAdmin,async (req, res) => {
 
     if(!req.body.postTitle || !req.body.postBody )
     {
