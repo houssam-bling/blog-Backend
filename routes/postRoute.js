@@ -171,7 +171,7 @@ router.patch('/:id',protect,isOwnerOrAdmin,async (req, res) => {
 
     if(!req.body.postTitle || !req.body.postBody )
     {
-        res.status(404).json({ message: "كل الحقول مطلوبة" });
+        res.status(400).json({ message: "كل الحقول مطلوبة" });
         return 
     }
 
@@ -194,13 +194,13 @@ router.patch('/:id',protect,isOwnerOrAdmin,async (req, res) => {
         
         updatedPost = await post.findByIdAndUpdate(
             req.params.id,
-            { $pull: { postTitle:req.body.postTitle,
+            { $set: { postTitle:req.body.postTitle,
                 postBody:req.body.postBody
              }},
             { new: true }
         );
         
-        res.status(200).json({ message: 'تم تسجيل عدم الإعجاب بنجاح', updatedPost });
+        res.status(200).json({ message: 'تم تعديل المنشور بنجاح', updatedPost });
     } catch (e) {
         res.status(500).json({ message: e.message });
     }
