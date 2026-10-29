@@ -22,7 +22,7 @@ const globalLimiter = rateLimit({
 app.use(cors({
     origin: (origin,callback)=>{
 
-        if('https://blog-frontend-houssam18.vercel.app' === origin)
+        if('https://blog-frontend-houssam18.vercel.app' === origin || 'http://localhost:3000' === origin)
         {
            return callback(null,true);
         }
