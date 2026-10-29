@@ -1,34 +1,24 @@
 const express = require('express')
-const {protect} = require('../middleware/auth');
-const user = require('../models/user');
+const rateLimit = require("express-rate-limit")
+
+const {protect, authorize} = require('../middleware/auth');
+const { UpdateProfileInf, GetUserProfile, GetAllUsers, DeleteUserByID } = require('../controllers/userController');
+const { ProfileShema } = require('../middleware/ShemaValedation');
 
 const router = express.Router();
 
+const userLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 30, 
+    message: { message: 'محاولات كثيرة جداً يرجى المحاولة بعد 15 دقيقة' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
-router.patch("/update",protect,async(req,res)=>{
 
-    
-    try
-    {
-        const {fullname,email,gender} = req.body;
-        const theUser = await user.findById(req.user._id);
-
-        if(!theUser)
-        {
-            return res.status(401).json({message:"المستخدم غير موجود"});
-        }
-
-        const updatedUser = await user.findByIdAndUpdate(req.user._id,{$set:{fullname:fullname,
-            email:email,gender:gender
-        }},{new:true,runValidators: true}).select('-password');
-
-        res.status(201).json({message:'تم تعديل المعلومات بنجاح',user:updatedUser})
-    }
-    catch(e)
-    {
-        res.status(500).json({ message: e.message });
-    }
-
-})
+router.get("/all",userLimiter,protect,authorize("admin"),GetAllUsers)
+router.delete("/:UserId",userLimiter,protect,authorize("admin"),DeleteUserByID)
+router.patch("/update",userLimiter,protect,ProfileShema,UpdateProfileInf)
+router.get("/me",userLimiter,protect,GetUserProfile)
 
 module.exports = router;

@@ -1,41 +1,26 @@
 const express = require('express')
-const comment = require('../models/comment');
-const { protect } = require('../middleware/auth');
-const user = require('../models/user');
+
+const rateLimit = require("express-rate-limit")
+
+const { protect, isCommentOwnerOrAdmin, authorize } = require('../middleware/auth');
+const { AddCommetToPost, GetCommentsByPostID, DeleteCommentByID, UpdateCommentbyID, GetAllComments } = require('../controllers/commentController');
+const { AddCommentShema } = require('../middleware/ShemaValedation');
 
 const router = express.Router()
 
-router.post('/',protect,async (req,res)=>
-{
-    
-    try
-    {
-        const theuser = await user.findById(req.user._id)
-        if(!theuser)
-        {
-            res.status(404).json({message:"لم نجد المستخدم"})
-        }
-        const Comment = await comment.create({...req.body,author:theuser.id})
-        
-        res.status(201).json({message:"تم نشر التعليق بنجاح",Comment})
-    }
-    catch(e)
-    {
-        res.status(500).json({message:e.message})
-    }
-})
-router.get('/:id',async (req,res)=>
-{
-    try
-    {
-        const Comment = await comment.find({postId:req.params.id}).populate('author','fullname _id')
-        
-        res.status(200).json({message:"تم جلب التعليقات بنجاح",Comment})
-    }
-    catch(e)
-    {
-        res.status(500).json({message:e.message})
-    }
-})
+const commentLimit = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 50, 
+    message: { message: 'محاولات كثيرة جداً، يرجى المحاولة بعد 15 دقيقة' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+
+router.post('/',commentLimit,protect,AddCommentShema,AddCommetToPost)
+router.get('/',protect,authorize("admin"),GetAllComments)
+router.get('/:id',commentLimit,GetCommentsByPostID)
+router.delete('/:id',commentLimit,protect,isCommentOwnerOrAdmin,DeleteCommentByID)
+router.patch('/:id',commentLimit,protect,AddCommentShema,isCommentOwnerOrAdmin,UpdateCommentbyID)
 
 module.exports = router;

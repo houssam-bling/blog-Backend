@@ -1,6 +1,7 @@
-const {verifyToken} = require('../jwt');
+const {verifyToken} = require('../utils/jwt');
 const post = require('../models/post');
 const user = require('../models/user');
+const comment = require('../models/comment');
 
 exports.protect = async (req,res,next)=>{
 
@@ -49,21 +50,16 @@ exports.protect = async (req,res,next)=>{
         res.status(500).json({ message: err.message });
     }
 }
-
 exports.authorize = (...roles)=>{
-   return (req,res,next)=>{
+    return async (req,res,next)=>{
 
-        if(!roles.includes(req.user.role))
+        if(roles.includes(req.user.role))
         {
-            return res.status(403).json({ 
-                message: 'غير مصرح لك بهذا الإجراء' 
-            });
+            return next();
         }
-        next();
+        return res.status(403).json({message:"لست مصرح"})
     }
-} 
-
-
+}
 exports.isOwnerOrAdmin = async (req,res,next)=>{
 
     try
@@ -76,7 +72,7 @@ exports.isOwnerOrAdmin = async (req,res,next)=>{
 
        if(req.user.role === "admin")
        {
-          return  next();
+            return  next();
        }
 
        if(req.user._id.toString() !== Post.author.toString())
@@ -90,3 +86,20 @@ exports.isOwnerOrAdmin = async (req,res,next)=>{
         res.status(500).json({ message: err.message });
     }
 }
+exports.isCommentOwnerOrAdmin = async (req, res, next) => {
+    try {
+        const Comment = await comment.findById(req.params.id); 
+
+        if (!Comment) {
+            return res.status(404).json({ message: "التعليق غير موجود" });
+        }
+
+        if (req.user.role === "admin" || req.user._id.toString() === Comment.author.toString()) {
+            return next();
+        }
+
+        res.status(401).json({ message: "غير مصرح لك بحذف هذا التعليق" });
+    } catch (err) {
+        next(err);
+    }
+};
