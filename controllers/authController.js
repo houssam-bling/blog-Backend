@@ -68,7 +68,7 @@ exports.signIn = async (req,res,next)=>
             sameSite:'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             secure:true,
-        })
+        });
         res.status(200).json({message:'تم ايجاد المستخدم بنجاح',User: {
                 _id: User._id,
                 fullname: User.fullname,
