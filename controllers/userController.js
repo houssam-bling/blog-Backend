@@ -55,13 +55,14 @@ exports.DeleteUserByID = async (req,res,next)=>
     const userId = req.params.UserId;
     try
     {
-        await comment.deleteMany({author:userId});
-        await post.deleteMany({author:userId});
         const deletedUser = await User.findByIdAndDelete(userId)
         if(!deletedUser)
         {
             return res.status(404).json({message:"المستخدم ليس  موجود"});
         }
+        await comment.deleteMany({author:userId});
+        await post.deleteMany({author:userId});
+
         res.status(200).json({message:"تم حذف المستخدم بنجاح",deletedUser})
     }
     catch(e)

@@ -14,7 +14,7 @@ exports.signUp = async (req,res,next)=>
             fullname:req.body.fullname,
             password:req.body.password,
             gender:req.body.gender,
-            email:req.body.email,
+            email:(req.body.email).toLowerCase(),
             role:"user"
         })
         const token = generateToken(newUser._id,newUser.role);
@@ -46,7 +46,7 @@ exports.signIn = async (req,res,next)=>
     try
     {
         const User = await user.findOne({
-            email:req.body.email,
+            email:(req.body.email).toLowerCase(),
         }).select('+password')
         if(!User)
         {
